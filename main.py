@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 import config
+import os
 
 client = discord.Client()
 
@@ -80,7 +81,4 @@ async def process_ban_command(message):
     else:
         await message.channel.send("You do not have permission to use this command!")
 
-
-cfg = config.AppConfig()
-token = cfg.get_discord_bot_key()
-client.run(token)
+client.run(os.getenv('TOKEN'))
