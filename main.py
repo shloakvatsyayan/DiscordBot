@@ -48,7 +48,18 @@ async def on_message(message):
             "\nBot made by SSVF112 Playz.")
 
     if norm_content.startswith("!ban"):
-        await process_ban_command(message)
+        author = message.author
+        roles = author.roles
+        id_list = []
+        for role in roles:
+            role_id = role.id
+            id_list.append(role_id)
+            print("Role  name:{}, ID:{}".format(role.name, role.id))
+        admin_id = 708353267188629586
+        if admin_id in id_list:
+            await message.channel.send("Please enter the name of the name of th user to ban.")
+        else:
+            await message.channel.send("You do not have permission to use this command!")
 
     if norm_content.startswith('!play'):
         await message.channel.send(
@@ -61,24 +72,9 @@ async def on_message(message):
         await message.channel.send('For this to be a friendly server, NO inappropriate language is allowed. '
                                    'Admin will ban/kick/warn and mute you as a punishment in some time {}.'.format(
             author),
-                                   tts=True)
+            tts=True)
         channel = client.get_channel(708354188643401799)
         await channel.send("INAPPROPRIATE LANGUAGE SAID IN {} by {}.".format(pchannel, author))
-
-
-async def process_ban_command(message):
-    author = message.author
-    roles = author.roles
-    id_list = []
-    for role in roles:
-        role_id = role.id
-        id_list.append(role_id)
-        print("Role  name:{}, ID:{}".format(role.name, role.id))
-    admin_id = 708353267188629586
-    if admin_id in id_list:
-        await message.channel.send("Please enter the name of the name of th user to ban.")
-    else:
-        await message.channel.send("You do not have permission to use this command!")
 
 
 cfg = config.AppConfig()
