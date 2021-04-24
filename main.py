@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
+import time
 import config
-
 import not_allowed_words as na
 
 client = discord.Client()
@@ -15,16 +15,7 @@ async def on_ready():
     print('Logged in as {0.user}'.format(client))
 
 
-def is_appropriate(msg: str):
-    not_allowed = ["heck", "stupid"]
-    msg_clean = msg.strip().lower()
-    if msg_clean in not_allowed:
-        return False
-    else:
-        return True
-
 not_allowed = na.not_allowed
-
 
 
 @client.event
@@ -59,7 +50,13 @@ async def on_message(message):
             print("Role  name:{}, ID:{}".format(role.name, role.id))
         admin_id = 708353267188629586
         if admin_id in id_list:
-            await message.channel.send("Please enter the name of the name of th user to ban.")
+            await message.channel.send(
+                "Please enter the name of the name with # number of the user to ban (ex:SSVF112 Playz YT#3323)."
+                "\n This may take a minute.")
+            time.sleep(30)
+            ban_user = norm_content
+            await ban_user.ban(reason="Banned by {} with SSVF112 Playz Bot".format(ban_user), delete_message_days=7)
+            await message.channel.send("Hey {}! I successfully used the ban hammer on {}.".format(author,ban_user))
         else:
             await message.channel.send("You do not have permission to use this command!")
 
@@ -72,9 +69,8 @@ async def on_message(message):
         pchannel = message.channel
         await message.delete()
         await message.channel.send('For this to be a friendly server, NO inappropriate language is allowed. '
-                                   'Admin will ban/kick/warn and mute you as a punishment in some time {}.'.format(
-            author),
-            tts=True)
+                                   'Admin will ban/kick/warn/mute you as a punishment in some time {}.'.format(author),
+                                   tts=True)
         channel = client.get_channel(708354188643401799)
         await channel.send("INAPPROPRIATE LANGUAGE SAID IN {} by {}.".format(pchannel, author))
 
