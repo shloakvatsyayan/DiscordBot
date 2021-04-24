@@ -1,0 +1,1 @@
+not_allowed = ["heck", "stupid", "fuck", "shit", "bull shit", "ass", "bitch", "dick",]

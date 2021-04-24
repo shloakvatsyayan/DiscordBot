@@ -2,6 +2,8 @@ import discord
 from discord.ext import commands
 import config
 
+import not_allowed_words as na
+
 client = discord.Client()
 
 bot = commands.Bot(command_prefix='!')
@@ -21,8 +23,8 @@ def is_appropriate(msg: str):
     else:
         return True
 
+not_allowed = na.not_allowed
 
-not_allowed = ["heck", "stupid"]
 
 
 @client.event
@@ -32,7 +34,7 @@ async def on_message(message):
 
     contents = message.content
     norm_content = contents.strip().lower()
-    if norm_content.startswith('!ssvf112playzwebsite'):
+    if norm_content.startswith('!ssvf112playzsite'):
         await message.channel.send(
             'Hi! I am a Discord bot SSVF112 Playz made. Here is the website: https://ssvf112playz.wixsite.com/website')
 
@@ -40,7 +42,7 @@ async def on_message(message):
         await message.channel.send(
             "Hi! I see you asked what you can do with this bot. Nothing much yet, it's still being developed."
             "\nThe only current exitsing commands are:"
-            "\n \t!ssvf112playwebsite = Gives the link to the channel website made on wix.com"
+            "\n \t!ssvf112playzsite = Gives the link to the channel website made on wix.com"
             "\n \t!help = Gives this text."
             "\nThe only other features are:"
             "\n \tA bad word filter. Currently only filters 2 bad words."
