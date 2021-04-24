@@ -20,7 +20,7 @@ class AppConfig:
         main_section = self.config['main']
         return main_section['discord_token']
 
-
+#sdjaj;dos
 if __name__ == '__main__':
     app_config = AppConfig()
     print(app_config.get_discord_bot_key())
