@@ -56,7 +56,7 @@ async def on_message(message):
             time.sleep(30)
             ban_user = norm_content
             await ban_user.ban(reason="Banned by {} with SSVF112 Playz Bot".format(ban_user), delete_message_days=7)
-            await message.channel.send("Hey {}! I successfully used the ban hammer on {}.".format(author,ban_user))
+            await message.channel.send("Hey {}! I successfully used the ban hammer on {}.".format(author, ban_user))
         else:
             await message.channel.send("You do not have permission to use this command!")
 
