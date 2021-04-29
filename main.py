@@ -1,10 +1,13 @@
 import discord
 from discord.ext import commands
 import time
+from discord import mentions
+from discord import guild
 import config
 import not_allowed_words as na
 
 client = discord.Client()
+
 
 bot = commands.Bot(command_prefix='!')
 bot.remove_command('!help')
@@ -50,13 +53,14 @@ async def on_message(message):
             print("Role  name:{}, ID:{}".format(role.name, role.id))
         admin_id = 708353267188629586
         if admin_id in id_list:
-            await message.channel.send(
-                "Please enter the name of the name with # number of the user to ban (ex:SSVF112 Playz YT#3323)."
-                "\n This may take a minute.")
-            time.sleep(30)
-            ban_user = norm_content
-            await ban_user.ban(reason="Banned by {} with SSVF112 Playz Bot".format(ban_user), delete_message_days=7)
-            await message.channel.send("Hey {}! I successfully used the ban hammer on {}.".format(author, ban_user))
+            clean_up_conent = contents.strip()
+            parts = clean_up_conent.split()
+            g = await  client.fetch_guild(707694300263350323)
+            for member in g.members:
+                print(member.name)
+            member = g.get_member_named("SSVF112 Playz YT#3323")
+            await member.ban()
+            await message.channel.send("Successfully used the ban hammer on {}.".format())
         else:
             await message.channel.send("You do not have permission to use this command!")
 
