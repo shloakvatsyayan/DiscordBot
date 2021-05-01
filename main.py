@@ -55,15 +55,11 @@ async def on_message(message):
             g = await client.fetch_guild(707694300263350323)
             for member in g.members:
                 print(member.name)
-            member = g.get_member_named(ban_member)
+            member = g.get_member_named()
             await member.ban()
             await message.channel.send("Successfully used the ban hammer on {}.".format())
         else:
             await message.channel.send("You do not have permission to use this command!")
-
-    if norm_content.startswith('!play'):
-        await message.channel.send(
-            "Sorry for the inconvenience, Music Bot was removed from this server and will be added back soon.")
 
     if any(word in norm_content for word in not_allowed):
         author = message.author
