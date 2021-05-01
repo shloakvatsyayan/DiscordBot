@@ -38,7 +38,6 @@ async def on_message(message):
             "\n \t!help = Gives this text."
             "\nThe only other features are:"
             "\n \tA bad word filter. Currently only filters 2 bad words."
-            "\n \tA message when you say !play because music bot(Rythm) was removed."
             "\nBot made by SSVF112 Playz.")
 
     if norm_content.startswith("!ban"):
@@ -53,10 +52,10 @@ async def on_message(message):
         if admin_id in id_list:
             clean_up_conent = contents.strip()
             parts = clean_up_conent.split()
-            g = await  client.fetch_guild(707694300263350323)
+            g = await client.fetch_guild(707694300263350323)
             for member in g.members:
                 print(member.name)
-            member = g.get_member_named("SSVF112 Playz YT#3323")
+            member = g.get_member_named(ban_member)
             await member.ban()
             await message.channel.send("Successfully used the ban hammer on {}.".format())
         else:
