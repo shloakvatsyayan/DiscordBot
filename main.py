@@ -6,7 +6,6 @@ import not_allowed_words as na
 
 client = discord.Client()
 
-
 bot = commands.Bot(command_prefix='!')
 bot.remove_command('!help')
 
@@ -37,7 +36,7 @@ async def on_message(message):
             "\n \t!ssvf112playzsite = Gives the link to the channel website made on wix.com"
             "\n \t!help = Gives this text."
             "\nThe only other features are:"
-            "\n \tA bad word filter. Currently only filters 2 bad words."
+            "\n \tA bad word filter."
             "\nBot made by SSVF112 Playz.")
 
     if norm_content.startswith("!ban"):
@@ -51,11 +50,12 @@ async def on_message(message):
         admin_id = 708353267188629586
         if admin_id in id_list:
             clean_up_conent = contents.strip()
-            parts = clean_up_conent.split()
+            ban_member = clean_up_conent.replace("!ban", "")
             g = await client.fetch_guild(707694300263350323)
+            member = g.get_member_named(ban_member)
+
             for member in g.members:
                 print(member.name)
-            member = g.get_member_named()
             await member.ban()
             await message.channel.send("Successfully used the ban hammer on {}.".format())
         else:
