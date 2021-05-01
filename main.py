@@ -1,8 +1,6 @@
 import discord
 from discord.ext import commands
 import time
-from discord import mentions
-from discord import guild
 import config
 import not_allowed_words as na
 
