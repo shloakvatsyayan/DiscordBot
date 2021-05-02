@@ -16,7 +16,6 @@ def has_command(message_contents: str):
     :param message_contents:
     :return:
     """
-
     return False
 
 

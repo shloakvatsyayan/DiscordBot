@@ -51,13 +51,14 @@ async def on_message(message):
         if admin_id in id_list:
             clean_up_conent = contents.strip()
             ban_member = clean_up_conent.replace("!ban", "")
-            g = await client.fetch_guild(707694300263350323)
+            g = client.get_guild(707694300263350323)
             member = g.get_member_named(ban_member)
-
-            for member in g.members:
-                print(member.name)
-            await member.ban()
-            await message.channel.send("Successfully used the ban hammer on {}.".format())
+            if not member:
+                print("Could not locate member {} in guild".format(ban_member))
+            else:
+                print("Located member {}. Attemptting ban.".format(ban_member))
+                await member.ban()
+                await message.channel.send("Successfully used the ban hammer on {}.".format())
         else:
             await message.channel.send("You do not have permission to use this command!")
 
