@@ -50,7 +50,7 @@ async def on_message(message):
         admin_id = 708353267188629586
         if admin_id in id_list:
             clean_up_conent = contents.strip()
-            ban_member = clean_up_conent.replace("!ban", "")
+            ban_member = clean_up_conent[5:]
             g = client.get_guild(707694300263350323)
             member = g.get_member_named(ban_member)
             if not member:
