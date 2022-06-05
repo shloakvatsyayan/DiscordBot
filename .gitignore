@@ -1,2 +1,8 @@
 .vscode/
 __pycache__/
+.pytest_cache
+TestUserAccount.py
+thread_testing.py
+updatedmain.py
+TestCommands.py
+Commands.py
