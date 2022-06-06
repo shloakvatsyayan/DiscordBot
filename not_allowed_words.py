@@ -1,1 +1,1 @@
-not_allowed = ["fuck", "shit", "bull shit", "ass", "bitch", "dick",]
+not_allowed = ["fuck", "f@ck", "shit", "bull shit", "ass", "bitch", "dick",]

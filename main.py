@@ -1,6 +1,5 @@
 import discord
 from discord.ext import commands
-import time
 import config
 import not_allowed_words as na
 import user
