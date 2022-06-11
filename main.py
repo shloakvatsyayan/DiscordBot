@@ -70,36 +70,41 @@ async def on_message(message):
     if contents.startswith("!addmoney"):
         author = message.author
         roles = author.roles
-        print(roles)
+        id_list =[]
+        for role in roles:
+            id_list.append(role.id)
+            print("Role  name:{}, ID:{}".format(role.name, role.id))
         admin_role = 766037459791904779
-        #if admin_role in roles:
-        command = contents
-        parts = command.split()
-        if parts[1].isnumeric() == True:
-            memberstr = to_coin_key(parts[2])
-            if user.is_user_registered(memberstr):
-                amount = int(parts[1])
-                user.add_money(memberstr, amount)
-                balance = user.get_money(memberstr)
-                await message.channel.send("{}'s balance is now ${}.".format(memberstr, balance))
-            elif user.is_user_registered(memberstr) == False:
-                await message.channel.send("Member is not registered.")
+        if admin_role in id_list:
+            command = contents
+            parts = command.split()
+            if parts[1].isnumeric() == True:
+                memberstr = to_coin_key(parts[2])
+                if user.is_user_registered(memberstr):
+                    amount = int(parts[1])
+                    user.add_money(memberstr, amount)
+                    balance = user.get_money(memberstr)
+                    await message.channel.send("{}'s balance is now ${}.".format(memberstr, balance))
+                elif user.is_user_registered(memberstr) == False:
+                    await message.channel.send("Member is not registered.")
+            else:
+                await message.channel.send("Incorrect format, correct format (type without brackets): !addmoney {amount} "
+                                           "{user}")
         else:
-            await message.channel.send("Incorrect format, correct format (type without brackets): !addmoney {amount} "
-                                       "{user}")
-    #else:
-        #await message.channel.send("You do not have permision to use this command.")
+            await message.channel.send("You do not have permision to use this command.")
 
     if norm_content.startswith("!sell"):
         author = message.author
         authorstr = to_coin_key(author)
-        user_coins = user.get_money(authorstr)
-        user_inv = user.get_inv(authorstr)
-        user.add_money(authorstr, user_coins+user_inv)
-        user.set_inv(authorstr, 0)
-        new_user_coins = user.get_money(authorstr)
-        await message.channel.send("Your new balance is now ${}.".format(new_user_coins))
-
+        if authorstr in user.coins:
+            user_coins = user.get_money(authorstr)
+            user_inv = user.get_inv(authorstr)
+            user.add_money(authorstr, user_coins+user_inv)
+            user.set_inv(authorstr, 0)
+            new_user_coins = user.get_money(authorstr)
+            await message.channel.send("Your new balance is now ${}.".format(new_user_coins))
+        else:
+            await message.channel.send("You are not registered. Use !start to register and be able to use this command.")
 
     if norm_content.startswith("!bal"):
         author = message.author
@@ -108,7 +113,7 @@ async def on_message(message):
             mbalance = user.get_money(authorstr)
             ibalance = user.get_inv(authorstr)
             await message.channel.send("Your balance is ${}.".format(mbalance))
-            await message.channel.send("You currently have {} ore in you inventory. Use !sell to sell!".format(ibalance))
+            await message.channel.send("You currently have {} ore in you inventory. You earn 1 ore per second. Use !sell to sell!".format(ibalance))
         else:
             await message.channel.send("You have not registered! Use !start to register.")
 
@@ -121,6 +126,14 @@ async def on_message(message):
                                    tts=True)
         channel = client.get_channel(980999567455711304)
         await channel.send("INAPPROPRIATE LANGUAGE SAID IN {} by {}.".format(pchannel, author))
+
+    if contents.startswith("$sudo heck"):
+        command = contents
+        parts = command.split
+        user = str(parts[2])
+        print(user)
+        #await message.channel.send("hecked {} through hecker terminal".format(parts[2]))
+
 
 
 def to_coin_key(member):
