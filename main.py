@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 import config
 import not_allowed_words as na
-import user
+
 
 client = discord.Client()
 
@@ -12,9 +12,11 @@ bot.remove_command('!help')
 
 @client.event
 async def on_ready():
+    import user
     print('Logged in as {0.user}'.format(client))
     user.load_coins()
     user.load_inv()
+    user.load_heck()
     user.start_inv_thread()
 
 not_allowed = na.not_allowed
@@ -22,6 +24,7 @@ not_allowed = na.not_allowed
 
 @client.event
 async def on_message(message):
+    import user
     if message.author == client.user:
         return
 
@@ -127,12 +130,30 @@ async def on_message(message):
         channel = client.get_channel(980999567455711304)
         await channel.send("INAPPROPRIATE LANGUAGE SAID IN {} by {}.".format(pchannel, author))
 
-    if contents.startswith("$sudo heck"):
+    if contents.startswith("$sudo "):
         command = contents
-        parts = command.split
-        user = str(parts[2])
-        print(user)
-        #await message.channel.send("hecked {} through hecker terminal".format(parts[2]))
+        parts = command.split()
+        author = message.author
+        targetuser = parts[2]
+        target = to_coin_key(targetuser)
+        if parts[1] == "heck":
+            await message.channel.send("hecked {} through hecker terminal".format(target))
+            user.add_heck_user(target)
+            user.set_heckstat(target, 1)
+        elif parts[1] == "destroy":
+            if user.get_heckstat(target) == 1:
+                await message.channel.send("{} has been destroyed".format(target))
+                user.set_heckstat(target, 0)
+
+            elif user.get_heckstat(target) == 0:
+                await message.channel.send("you must heck this user again to use this command")
+
+            else:
+                await message.channel.send("you must heck the target user first")
+
+
+
+
 
 
 
