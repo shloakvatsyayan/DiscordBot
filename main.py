@@ -1,3 +1,5 @@
+import time
+
 import discord
 from discord.ext import commands
 import config
@@ -16,8 +18,7 @@ async def on_ready():
     print('Logged in as {0.user}'.format(client))
     user.load_coins()
     user.load_inv()
-    user.load_heck()
-    user.start_inv_thread()
+    #user.start_inv_thread()
 
 not_allowed = na.not_allowed
 
@@ -134,28 +135,21 @@ async def on_message(message):
         command = contents
         parts = command.split()
         author = message.author
-        targetuser = parts[2]
-        target = to_coin_key(targetuser)
+        target = parts[2]
         if parts[1] == "heck":
             await message.channel.send("hecked {} through hecker terminal".format(target))
-            user.add_heck_user(target)
-            user.set_heckstat(target, 1)
         elif parts[1] == "destroy":
-            if user.get_heckstat(target) == 1:
-                await message.channel.send("{} has been destroyed".format(target))
-                user.set_heckstat(target, 0)
-
-            elif user.get_heckstat(target) == 0:
-                await message.channel.send("you must heck this user again to use this command")
-
-            else:
-                await message.channel.send("you must heck the target user first")
+            await message.channel.send("hecking {}".format(target))
+            time.sleep(1)
+            await message.channel.send("hecked {}".format(target))
+            time.sleep(1)
+            await message.channel.send("destroying {}".format(target))
+            time.sleep(1)
+            await message.channel.send("❌{} was destroyed by {}".format(target, author))
 
 
-
-
-
-
+    if contents.startswith("!testemoji hecker"):
+        await message.channel.send("\<:hecker:989901891263680573>")
 
 def to_coin_key(member):
     return "{}".format(member)

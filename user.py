@@ -5,11 +5,9 @@ import threading
 
 coins = {}
 inv = {}
-hecked = {}
 
 file_name_coins = "coins.json"
 file_name_inv = "inv.json"
-file_name_hecked = "hecked.json"
 
 
 
@@ -25,12 +23,6 @@ def load_inv():
     file_ptr = open(file_name_inv, 'r')
     return json.load(file_ptr)
 
-def load_heck():
-    if not os.path.isfile(file_name_hecked):
-        return {}
-    file_ptr = open(file_name_hecked, 'r')
-    return json.load(file_ptr)
-
 def save_coins():
     file_ptr = open(file_name_coins, 'w')
     json.dump(coins, file_ptr)
@@ -40,12 +32,6 @@ def save_inv():
     file_ptr = open(file_name_inv, 'w')
     json.dump(inv, file_ptr)
     file_ptr.close()
-
-def save_heck():
-    file_ptr = open(file_name_hecked, 'w')
-    json.dump(hecked, file_ptr)
-    file_ptr.close()
-
 
 def add_money(uid, amt):
     if uid in coins:
@@ -67,32 +53,17 @@ def set_inv(uid, amt):
         inv[uid]=amt
     save_inv()
 
-def set_heckstat(uid, num):
-    if uid in hecked:
-        hecked[uid]=num
-    save_heck()
-
 def get_money(uid):
     if uid in coins:
         return coins[uid]
     else:
-        return None
+        return 0
 
 def get_inv(uid):
     if uid in inv:
         return inv[uid]
     else:
         return None
-
-def get_heckstat(uid):
-    if uid in hecked:
-        return hecked[uid]
-    else:
-        return None
-
-def add_heck_user(uid):
-    hecked[uid] = 0
-    save_heck()
 
 def start_inv_thread():
     t = threading.Thread(target=add_inv_loop)
@@ -102,7 +73,7 @@ def add_inv_loop():
     while True:
         for i in inv:
             add_inv(i, 1)
-        t.sleep(1)
+            t.sleep(1)
 
 def is_user_registered(uid):
     if uid in coins:
@@ -112,4 +83,3 @@ def is_user_registered(uid):
 
 coins = load_coins()
 inv = load_inv()
-hecked = save_heck()
