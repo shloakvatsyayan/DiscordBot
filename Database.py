@@ -22,7 +22,7 @@ class Database:
 
     def __init__(self):
         self.app_config = config.AppConfig()
-        self.db_dir = self.app_config.get_config_dir()
+        self.db_dir = "." # self.app_config.get_config_dir()
         self.coins_file = os.path.join(self.db_dir, Database.file_name_coins)
         self.invs_file = os.path.join(self.db_dir, Database.file_name_invs)
         self._load_db()
@@ -49,3 +49,23 @@ class Database:
             user_amt = self.inv[uid]
             self.inv[uid] = user_amt + amt
         self._save_db()
+
+    def set_inv(self, uid, amt):
+        if uid in self.inv:
+            self.inv[uid] = amt
+        self._save_db()
+
+    def get_money(self, uid):
+        if uid in self.coins:
+            return self.coins[uid]
+        else:
+            return 0
+
+    def get_inv(self, uid):
+        if uid in self.inv:
+            return self.inv[uid]
+        else:
+            return None
+
+    def is_user_registered(self, uid):
+        return uid in self.coins
