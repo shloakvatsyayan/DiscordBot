@@ -4,26 +4,41 @@ import discord
 from discord.ext import commands
 import config
 import not_allowed_words as na
-
+import database as d
+import requests
 
 client = discord.Client()
+user_db = d.Database()
 
 bot = commands.Bot(command_prefix='!')
 bot.remove_command('!help')
 
 
+@bot.command(name="joke")
+async def handle_joke_command(ctx):
+    """
+    See TestJokesAPI for learning how to use this
+    :param ctx:
+    :return:
+    """
+
+    await ctx.send("No Jokes!")
+
+
+"""
 @client.event
 async def on_ready():
     import user
     print('Logged in as {0.user}'.format(client))
     user.load_coins()
     user.load_inv()
-    #user.start_inv_thread()
+    # user.start_inv_thread()
+"""
 
 not_allowed = na.not_allowed
 
 
-@client.event
+# @client.event
 async def on_message(message):
     if message.author == client.user:
         return
@@ -32,34 +47,34 @@ async def on_message(message):
     norm_content = contents.strip().lower()
 
     if norm_content.startswith("!help"):
-        await handle_help_command(message)
+        await handle_help_command(user_db, message)
 
     if norm_content.startswith("!ban"):
-        await handle_ban_command(contents, message)
+        await handle_ban_command(user_db, contents, message)
 
     if norm_content.startswith("!start"):
-        await handle_start_command(message)
+        await handle_start_command(user_db, message)
 
     if contents.startswith("!addmoney"):
-        await handle_add_money_command(contents, message)
+        await handle_add_money_command(user_db, contents, message)
 
     if norm_content.startswith("!sell"):
-        await handle_sell_command(message)
+        await handle_sell_command(user_db, message)
 
     if norm_content.startswith("!bal"):
-        await handle_balance_command(message)
+        await handle_balance_command(user_db, message)
 
     if any(word in norm_content for word in not_allowed):
-        await handle_banned_words_command(message)
+        await handle_banned_words_command(user_db, message)
 
     if contents.startswith("$sudo "):
-        await handle_sudo_command(contents, message)
+        await handle_sudo_command(user_db, contents, message)
 
     if contents.startswith("!testemoji hecker"):
         await message.channel.send("\<:hecker:989901891263680573>")
 
 
-async def handle_help_command(message):
+async def handle_help_command(user_database, message):
     await message.channel.send(
         "Hi! I see you asked what you can do with this bot. Nothing much yet, it's still being developed."
         "\nThe only current exitsing commands are:"
@@ -69,7 +84,7 @@ async def handle_help_command(message):
         "\n \tA bad word filter.")
 
 
-async def handle_sudo_command(contents, message):
+async def handle_sudo_command(user_database, contents, message):
     command = contents
     parts = command.split()
     author = message.author
@@ -86,7 +101,7 @@ async def handle_sudo_command(contents, message):
         await message.channel.send("❌{} was destroyed by {}".format(target, author))
 
 
-async def handle_banned_words_command(message):
+async def handle_banned_words_command(user_database, message):
     author = message.author
     pchannel = message.channel
     await message.delete()
@@ -97,13 +112,12 @@ async def handle_banned_words_command(message):
     await channel.send("INAPPROPRIATE LANGUAGE SAID IN {} by {}.".format(pchannel, author))
 
 
-async def handle_balance_command(message):
-    import user
+async def handle_balance_command(user_databse, message):
     author = message.author
     authorstr = to_coin_key(author)
-    if user.is_user_registered(authorstr) == True:
-        mbalance = user.get_money(authorstr)
-        ibalance = user.get_inv(authorstr)
+    if user_databse.is_user_registered(authorstr) == True:
+        mbalance = user_databse.get_money(authorstr)
+        ibalance = user_databse.get_inv(authorstr)
         await message.channel.send("Your balance is ${}.".format(mbalance))
         await message.channel.send(
             "You currently have {} ore in you inventory. You earn 1 ore per second. Use !sell to sell!".format(
@@ -112,23 +126,21 @@ async def handle_balance_command(message):
         await message.channel.send("You have not registered! Use !start to register.")
 
 
-async def handle_sell_command(message):
-    import user
+async def handle_sell_command(user_database, message):
     author = message.author
     authorstr = to_coin_key(author)
-    if authorstr in user.coins:
-        user_coins = user.get_money(authorstr)
-        user_inv = user.get_inv(authorstr)
-        user.add_money(authorstr, user_coins + user_inv)
-        user.set_inv(authorstr, 0)
-        new_user_coins = user.get_money(authorstr)
+    if authorstr in user_database.coins:
+        user_coins = user_database.get_money(authorstr)
+        user_inv = user_database.get_inv(authorstr)
+        user_database.add_money(authorstr, user_coins + user_inv)
+        user_database.set_inv(authorstr, 0)
+        new_user_coins = user_database.get_money(authorstr)
         await message.channel.send("Your new balance is now ${}.".format(new_user_coins))
     else:
         await message.channel.send("You are not registered. Use !start to register and be able to use this command.")
 
 
-async def handle_add_money_command(contents, message):
-    import user
+async def handle_add_money_command(user_database, contents, message):
     author = message.author
     roles = author.roles
     id_list = []
@@ -141,12 +153,12 @@ async def handle_add_money_command(contents, message):
         parts = command.split()
         if parts[1].isnumeric() == True:
             memberstr = to_coin_key(parts[2])
-            if user.is_user_registered(memberstr):
+            if user_database.is_user_registered(memberstr):
                 amount = int(parts[1])
-                user.add_money(memberstr, amount)
-                balance = user.get_money(memberstr)
+                user_database.add_money(memberstr, amount)
+                balance = user_database.get_money(memberstr)
                 await message.channel.send("{}'s balance is now ${}.".format(memberstr, balance))
-            elif user.is_user_registered(memberstr) == False:
+            elif user_database.is_user_registered(memberstr) == False:
                 await message.channel.send("Member is not registered.")
         else:
             await message.channel.send("Incorrect format, correct format (type without brackets): !addmoney {amount} "
@@ -155,17 +167,16 @@ async def handle_add_money_command(contents, message):
         await message.channel.send("You do not have permision to use this command.")
 
 
-async def handle_start_command(message):
-    import user
+async def handle_start_command(user_database, message):
     author = message.author
     key = to_coin_key(author)
-    user.add_money(key, 0)
-    money = user.get_money(key)
+    user_database.add_money(key, 0)
+    money = user_database.get_money(key)
     await message.channel.send("You have created an account for this bot.")
     await message.channel.send("Your balance is ${}.".format(money))
 
 
-async def handle_ban_command(contents, message):
+async def handle_ban_command(user_database, contents, message):
     author = message.author
     roles = author.roles
     id_list = []
@@ -195,4 +206,5 @@ def to_coin_key(member):
 
 cfg = config.AppConfig()
 token = cfg.get_discord_bot_key()
-client.run(token)
+bot.run(token)
+# client.run(token)
