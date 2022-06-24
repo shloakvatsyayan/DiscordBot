@@ -1,0 +1,14 @@
+{
+    "arrna": {
+        "bal": 30,
+        "inv": 110
+    },
+    "prateek": {
+        "bal": 20,
+        "inv": 70
+    },
+    "shloak": {
+        "bal": 10,
+        "inv": 100
+    }
+}
