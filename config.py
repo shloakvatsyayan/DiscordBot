@@ -20,6 +20,10 @@ class AppConfig:
         main_section = self.config['main']
         return main_section['discord_token']
 
+    def get_discord_slash_bot_key(self):
+        main_section = self.config['main']
+        return main_section['discord_slash_token']
+
     def get_config_dir(self):
         return self.cfg_dir
 
