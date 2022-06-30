@@ -35,8 +35,22 @@ not_allowed = na.not_allowed
 
 #    contents = message.content
 #    norm_content = contents.strip().lower()
-
-@bot.command(name="help", description="Help command.")
+""""
+@bot.event
+async def on_message(ctx):
+    contents = ctx.content
+    norm_content = contents.strip().lower()
+    if any(word in norm_content for word in not_allowed):
+        author = ctx.author
+        pchannel = ctx.channel
+        await ctx.delete()
+        await ctx.send('For this to be a friendly server, NO inappropriate language is allowed. '
+                                   'Admin will ban/kick/warn/mute you as a punishment in some time {}.'.format(author),
+                                   tts=True)
+        channel = bot.get_channel(980999567455711304)
+        await channel.send("INAPPROPRIATE LANGUAGE SAID IN {} by {}.".format(pchannel, author))
+"""
+@bot.command(name="help")
 async def handle_help_command(ctx):
     await ctx.send(
         "Hi! I see you asked what you can do with this bot. Nothing much yet, it's still being developed."
@@ -51,7 +65,7 @@ async def handle_help_command(ctx):
         "\n \tA bad word filter (disabled until API added).")
 
 
-@bot.command(name="sudo", description="Beluga")
+@bot.command(name="sudo")
 async def handle_sudo_command(ctx, command, target):
     author = ctx.author
     if command == "heck":

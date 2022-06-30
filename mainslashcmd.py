@@ -1,4 +1,5 @@
 import interactions
+import discord
 import config
 
 cfg = config.AppConfig()
@@ -30,7 +31,5 @@ async def handle_help_command(ctx: interactions.CommandContext):
     ],
 )
 async def handle_test_command(ctx: interactions.CommandContext, text: str):
-    await ctx.send("This test was successful, '{}' was entered into the required text field.".format(text), ephemeral=True)
-
-
+    await ctx.send("This test was successful, '{}' was entered into the required text field.".format(text))
 bot.start()

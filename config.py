@@ -24,6 +24,10 @@ class AppConfig:
         main_section = self.config['main']
         return main_section['discord_slash_token']
 
+    def get_oterulu_api_key(self):
+        main_section = self.config['main']
+        return main_section['oterlu_api_key']
+
     def get_config_dir(self):
         return self.cfg_dir
 

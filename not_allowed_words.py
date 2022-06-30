@@ -1,1 +1,1 @@
-not_allowed = ["stupid"]
+not_allowed = []
