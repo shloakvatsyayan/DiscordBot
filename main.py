@@ -25,7 +25,7 @@ async def on_ready():
     # user.start_inv_thread()
 
 
-not_allowed = na.not_allowed
+not_allowed = None
 
 
 # @client.event
