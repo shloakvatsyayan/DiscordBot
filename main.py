@@ -124,13 +124,13 @@ async def handle_balance_command(ctx):
 @bot.command(name="sell", )
 async def handle_sell_command(ctx):
     author = ctx.author
-    authorstr = to_coin_key(author)
-    if authorstr in user_db.coins:
-        user_coins = user_db.get_money(authorstr)
-        user_inv = user_db.get_inv(authorstr)
-        user_db.add_money(authorstr, user_coins + user_inv)
-        user_db.set_inv(authorstr, 0)
-        new_user_coins = user_db.get_money(authorstr)
+    auth_str = to_coin_key(author)
+    if auth_str in user_db.coins:
+        user_coins = user_db.get_money(auth_str)
+        user_inv = user_db.get_inv(auth_str)
+        user_db.add_money(auth_str, user_coins + user_inv)
+        user_db.set_inv(auth_str, 0)
+        new_user_coins = user_db.get_money(auth_str)
         await ctx.send("Your new balance is now ${}.".format(new_user_coins))
     else:
         await ctx.send("You are not registered. Use !start to register and be able to use this command.")
