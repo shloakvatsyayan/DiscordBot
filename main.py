@@ -16,47 +16,34 @@ user_db = d.Database()
 bot = commands.Bot(command_prefix='$')
 bot.remove_command("help")
 
+
 @bot.event
 async def on_ready():
     import user
     print('Logged in as {0.user}'.format(bot))
     user.load_coins()
     user.load_inv()
-    # user.start_inv_thread()
 
-
-not_allowed = None
-
-
-# @client.event
-#async def on_message(message):
-#    if message.author == client.user:
-#        return
-
-#    contents = message.content
-#    norm_content = contents.strip().lower()
-""""
 @bot.event
 async def on_message(ctx):
-    contents = ctx.content
-    norm_content = contents.strip().lower()
-    if any(word in norm_content for word in not_allowed):
-        author = ctx.author
-        pchannel = ctx.channel
-        await ctx.delete()
-        await ctx.send('For this to be a friendly server, NO inappropriate language is allowed. '
-                                   'Admin will ban/kick/warn/mute you as a punishment in some time {}.'.format(author),
-                                   tts=True)
-        channel = bot.get_channel(980999567455711304)
-        await channel.send("INAPPROPRIATE LANGUAGE SAID IN {} by {}.".format(pchannel, author))
-"""
+    await bot.process_commands(ctx)
+    author = ctx.author
+    labels = na.check_message(ctx)
+    print(labels)
+    labels_dict = {}
+    for d in labels:
+        labels_dict[d['label']] = d['level']
+    print(labels_dict)
+    if labels_dict["PROFANITY"] > 0:
+        bot.addroles(author, 983051103585312818)
+
 @bot.command(name="help")
 async def handle_help_command(ctx):
     await ctx.send(
         "Hi! I see you asked what you can do with this bot. Nothing much yet, it's still being developed."
         "\nThe only current exitsing commands are:"
         "\n \t!help = Gives this text."
-        "\n \t!ban = bans a user (not working)."
+        "\n \t!ban = bans a user."
         "\n \t!start registers you into the currency system."
         "\n \t!bal or !balance tells you you're balance."
         "\n \t!sell sells your ore for money."
@@ -85,8 +72,8 @@ async def handle_banned_words_command(ctx):
     pchannel = ctx.channel
     await ctx.delete()
     await ctx.channel.send('For this to be a friendly server, NO inappropriate language is allowed. '
-                               'Admin will ban/kick/warn/mute you as a punishment in some time {}.'.format(author),
-                               tts=True)
+                           'Admin will ban/kick/warn/mute you as a punishment in some time {}.'.format(author),
+                           tts=True)
     channel = client.get_channel(980999567455711304)
     await channel.send("INAPPROPRIATE LANGUAGE SAID IN {} by {}.".format(pchannel, author))
 
@@ -191,5 +178,6 @@ async def handle_ban_command(ctx, ban_member: discord.Member):
 
 def to_coin_key(member):
     return "{}".format(member)
+
 
 bot.run(token)
