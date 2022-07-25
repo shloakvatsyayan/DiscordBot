@@ -34,7 +34,7 @@ async def on_message(ctx):
 async def handle_help_command(ctx: interactions.CommandContext):
     await ctx.send(
         "Hi! I see you asked what you can do with this bot. The currently running code is just started development "
-        "so only two commands exist so far."
+        "so only three commands exist so far."
         "\nThe only current existing commands are:"
         "\n \t/help = Gives this text."
         "\n \t/test = Sends a test message."

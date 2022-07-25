@@ -3,6 +3,7 @@ import discord
 import interactions
 from discord.ext import commands
 import config
+import random
 import not_allowed_words as na
 import database as d
 import requests
@@ -24,10 +25,12 @@ async def on_ready():
     user.load_coins()
     user.load_inv()
 
+
 @bot.event
 async def on_message(ctx):
     await bot.process_commands(ctx)
     author = ctx.author
+    role = discord.utils.get(ctx.guild.roles, name="Muted")
     labels = na.check_message(ctx)
     print(labels)
     labels_dict = {}
@@ -35,21 +38,34 @@ async def on_message(ctx):
         labels_dict[d['label']] = d['level']
     print(labels_dict)
     if labels_dict["PROFANITY"] > 0:
-        bot.addroles(author, 983051103585312818)
+        await author.add_roles(role)
+    elif labels_dict["NSFW"] > 0:
+        await author.add_roles(role)
+    elif labels_dict["PERSONAL_INFO"] > 0:
+        await author.add_roles(role)
+    elif labels_dict["TOXIC"] > 0:
+        msg_channel = ctx.channel
+        channel = bot.get_channel(980999567455711304)
+        await channel.send("Possibly toxic behavior detected by {} in {}.".format(author, msg_channel))
+    else:
+        pass
 
 @bot.command(name="help")
 async def handle_help_command(ctx):
     await ctx.send(
         "Hi! I see you asked what you can do with this bot. Nothing much yet, it's still being developed."
-        "\nThe only current exitsing commands are:"
-        "\n \t!help = Gives this text."
-        "\n \t!ban = bans a user."
-        "\n \t!start registers you into the currency system."
-        "\n \t!bal or !balance tells you you're balance."
-        "\n \t!sell sells your ore for money."
+        "\nThe only current existing commands are:"
+        "\n \t$help = Gives this text."
+        "\n \t$ban = bans a user."
+        "\n \t$start registers you into the currency system."
+        "\n \t$bal or !balance tells you you're balance."
+        "\n \t$sell sells your ore for money."
+        "\n \t$calc solves simple math problems like 3-2. "
+        "NOTE: You have to put spaces between the symbol and numbers else it will break. Supported actions: +, -, *, "
+        "/, and rt "
         "\n \tSome other $sudo commands."
         "\nThe only other features are:"
-        "\n \tA bad word filter (disabled until API added).")
+        "\n \tA Profanity, toxic, NSFW, and personal info filter.")
 
 
 @bot.command(name="sudo")
@@ -65,17 +81,8 @@ async def handle_sudo_command(ctx, command, target):
         await ctx.send("destroying {}".format(target))
         time.sleep(1)
         await ctx.send("❌{} was destroyed by {}".format(target, author))
-
-
-async def handle_banned_words_command(ctx):
-    author = ctx.author
-    pchannel = ctx.channel
-    await ctx.delete()
-    await ctx.channel.send('For this to be a friendly server, NO inappropriate language is allowed. '
-                           'Admin will ban/kick/warn/mute you as a punishment in some time {}.'.format(author),
-                           tts=True)
-    channel = client.get_channel(980999567455711304)
-    await channel.send("INAPPROPRIATE LANGUAGE SAID IN {} by {}.".format(pchannel, author))
+    elif command == "delete":
+        await ctx.send("Deleted {} from existence.".format(target))
 
 
 @bot.command(name="bal")
@@ -175,6 +182,29 @@ async def handle_ban_command(ctx, ban_member: discord.Member):
     else:
         await ctx.send("You do not have permission to use this command!")
 
+
+@bot.command(name="calc")
+async def handle_calculator_cmd(ctx, a, sign, b):
+    a = int(a)
+    b = int(b)
+    if sign == "+":
+        c = a+b
+        await ctx.send("The answer is {}.".format(c))
+    if sign == "-":
+        c = a - b
+        await ctx.send("The answer is {}.".format(c))
+    if sign == "*":
+        c = a*b
+        await ctx.send("The answer is {}.".format(c))
+    if sign == "/":
+        c = a/b
+        await ctx.send("The answer is {}.".format(c))
+    if sign == "^":
+        c = a**b
+        await ctx.send("The answer is {}.".format(c))
+    if sign == "rt":
+        c = a**(1/b)
+        await ctx.send("The answer is {}.".format(c))
 
 def to_coin_key(member):
     return "{}".format(member)

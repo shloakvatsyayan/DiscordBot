@@ -8,7 +8,7 @@ headers = {'x-api-key': token, 'Content-type': 'application/json'}
 
 
 def check_message(message, threshold=1):
-    data = {'text': message}
+    data = {'text': message.content}
     data_str = json.dumps(data)
     resp = requests.post(url='https://classify.oterlu.com/v1/text', headers=headers, data=data_str)
     print("Status code:{}".format(resp.status_code))
